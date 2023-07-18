@@ -1,0 +1,38 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">BOX</th>
+        <th scope="col">NO BERKAS</th>
+        <th scope="col">KODE</th>
+        <th scope="col">NO URUT</th>
+        <th scope="col">INDEX</th>
+        <th scope="col">URAIAN MASALAH</th>
+        <th scope="col">TAHUN</th>
+        <th scope="col">JUMLAH</th>
+        <th scope="col">KET`</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in data %}
+      <tr>
+        <td>{{ d.row_number }}</td>
+        <td> {{ d.box_number }}</td>
+        <td>{{ d.bundle_number }}</td>
+        <td>{{ d.bundle_code }}</td>
+        <td>{{ d.doc_number }}</td>
+        <td>{{ d.bundle_title }}</td>
+        <td>{{ d.doc_description }}</td>
+        <td>{{ d.bundle_year }}</td>
+        <td>{{ d.doc_count }}</td>
+        <td>{{ d.bundle_orinot }}</td>
+
+      </tr>  
+      {% endfor %}
+    </tbody>
+  </table>

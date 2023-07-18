@@ -1,0 +1,38 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">BOX</th>
+        <th scope="col">NO BERKAS</th>
+        <th scope="col">NO URUT</th>
+        <th scope="col">INDEX</th>
+        <th scope="col">URAIAN MASALAH</th>
+        <th scope="col">TAHUN</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in data %}
+      <tr>
+        <td>#</td>
+        {% if d.box_number != "" %}
+        <td rowspan="{{ d.boxspan }}"> {{ d.box_number }}</td>
+        {% endif %}
+        {% if d.bundle_number != "" %}
+        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_number }}</td>
+        {% endif %}
+        <td>{{ d.doc_number }}</td>
+        {% if d.bundle_number != "" %}
+        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_title }}</td>
+        {% endif %}
+        <td>{{ d.doc_description }}</td>
+        {% if d.bundle_number != "" %}
+        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_year }}</td>
+        {% endif %}
+      </tr>  
+      {% endfor %}
+    </tbody>
+  </table>
