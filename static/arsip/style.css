@@ -17,16 +17,16 @@ h3 {
 }
 
 table, tr, th, td {
-    border: 1px solid white;
-    background-color: darkslateblue;
-    color: white;
+    border: 1px solid gray;
+    background-color: aliceblue;
+    color: black;
 }
 td > a {
     text-decoration: underline;
-    color: yellow;
+    color: darkblue;
 
 }
 
 td.file-exist {
-    background-color: cadetblue;
+    background-color: mediumaquamarine;
 }

@@ -127,11 +127,31 @@ def getdata(method, parquery):
 
     return boxlist
 
+def summarydata(data):
+    sumscan = 0
+
+    for d in data:
+        if d['pdffound'] == True:
+            sumscan += 1
+    sumnotscan = len(data) - sumscan
+    try:
+        percent = sumscan / len(data) * 100
+    except:
+        percent = 0
+
+    return (len(data), sumscan, sumnotscan, percent)
+
 def irigasi(request):
     funcname = sys._getframe().f_code.co_name
+    data = getdata(method=request.method, parquery=request.GET.get("search"))
+    summary = summarydata(data)
     context = {
-        "data": getdata(method=request.method, parquery=request.GET.get("search")),
-        "link": funcname
+        "data": data,
+        "link": funcname,
+        "totscan": summary[1],
+        "totnotscan": summary[2],
+        "totdata": summary[0],
+        "percent": f"{summary[3]:.3f}",
     }
     
     return render(request=request, template_name='irigasi.html', context=context)
@@ -139,9 +159,15 @@ def irigasi(request):
 
 def airbaku(request):
     funcname = sys._getframe().f_code.co_name
+    data = getdata(method=request.method, parquery=request.GET.get("search"))
+    summary = summarydata(data)
     context = {
-        "data": getdata(method=request.method, parquery=request.GET.get("search")),
-        "link": funcname
+        "data": data,
+        "link": funcname,
+        "totscan": summary[1],
+        "totnotscan": summary[2],
+        "totdata": summary[0],
+        "percent": f"{summary[3]:.3f}",
     }
     
     return render(request=request, template_name='irigasi.html', context=context)

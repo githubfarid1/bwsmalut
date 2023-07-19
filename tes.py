@@ -1,6 +1,8 @@
-import sys
-def tes():
-    print(sys._getframe().f_code.co_name) 
+def calPercent(x, y, integer = False):
+   percent = x / y * 100
+   
+   if integer:
+       return int(percent)
+   return percent
 
-
-tes()
+print("Percentage: ",calPercent(33, 200, True))
