@@ -91,7 +91,9 @@
           {% if d.bundle_number != "" %}
           <td rowspan="{{ d.bundlespan }}">{{ d.bundle_orinot }}</td>
           {% endif %}
-          <td><a href="http://google.com">VIEW</a></td>
+          {% if d.pdffound %}
+          <td><a href="{% url 'pdfdownload' link d.doc_id %}" target="_new">Lihat</a></td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>

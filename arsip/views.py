@@ -8,6 +8,8 @@ from os.path import exists
 from django.conf import settings
 import inspect
 import sys
+from reportlab.pdfgen import canvas
+
 def getdata(method, parquery):
     query = ""
     if method == "GET":
@@ -32,7 +34,6 @@ def getdata(method, parquery):
     
     for ke, doc in enumerate(docs):
         path = r"".join(settings.PDF_LOCATION + d.link + "/" + str(doc.bundle.box_number) + "/"+str(doc.doc_number) + ".pdf")
-        # return HttpResponse(path+"sss")
         pdffound = False
         if exists(path):
             pdffound = True
@@ -52,6 +53,7 @@ def getdata(method, parquery):
                             "bundle_orinot": doc.bundle.orinot,
                             "row_number": ke + 1,
                             "pdffound": pdffound,
+                            "doc_id": doc.id,
                             })
             continue
         if curbox_number == doc.bundle.box_number:
@@ -86,8 +88,9 @@ def getdata(method, parquery):
                         "doc_description": doc_description,
                         "doc_count": doc_count,
                         "bundle_orinot": bundle_orinot,
-                         "row_number": ke + 1,
+                        "row_number": ke + 1,
                         "pdffound": pdffound,
+                        "doc_id": doc.id,
                         })
         
     isfirst = True
@@ -142,9 +145,12 @@ def airbaku(request):
     }
     
     return render(request=request, template_name='irigasi.html', context=context)
-def pdf_view(request):
-    with open('/home/farid/pdf/document.pdf', 'rb') as pdf:
+def pdfdownload(request, link, doc_id):
+    doc = Doc.objects.get(id=doc_id)
+    path = r"".join(settings.PDF_LOCATION + link + "/" + str(doc.bundle.box_number) + "/"+str(doc.doc_number) + ".pdf")
+    filename = f"{link}_{doc.bundle.box_number}_{doc.doc_number}.pdf"
+    with open(path, 'rb') as pdf:
         response = HttpResponse(pdf.read(), content_type='application/pdf')
-        response['Content-Disposition'] = 'inline;filename=mypdf.pdf'
+        response['Content-Disposition'] = f'inline;filename={filename}.pdf'
         return response
     
