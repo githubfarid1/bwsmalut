@@ -6,93 +6,95 @@
   {% bootstrap_messages %}
   <link rel="stylesheet" href="{% static 'arsip/style.css' %}">  
 </head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src="{% static 'bws.jpg' %}" alt="BWS Maluku Utara" width="50px" height="45px" style="margin-left: 23px;"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="{% url 'irigasi' %}">Irigasi</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'irigasi' %}">Sungai</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'airbaku' %}">Air Baku</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'irigasi' %}">Pantai</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'irigasi' %}">Keuangan</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Satker</a>
-        </li>
-
-      </ul>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><img src="{% static 'bws.jpg' %}" alt="BWS Maluku Utara" width="50px" height="45px" style="margin-left: 50px;"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'irigasi' %}">Irigasi</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'irigasi' %}">Sungai</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'airbaku' %}">Air Baku</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'irigasi' %}">Pantai</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'irigasi' %}">Keuangan</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Satker</a>
+          </li>
+  
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
-<div class="container">
-  <h3><br/><br/>Aplikasi Monitoring Alih Media<br/>Arsip Digital BWS Maluku Utara</h3>
-  <form  action="{% url link %}" class="row g-3">
-    <div class="col-auto">
-      <label for="search" class="visually-hidden">Keyword..</label>
-      <input class="form-control" name="search" id="" placeholder="Keyword">
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary mb-3">Cari..</button>
-    </div>
-  </form>
-  <h4>
-  {% with data|length as total_results %}
-  Found {{ total_results }} result{{ total_results|pluralize }}
-  {% endwith %}
-  </h4>
-  <table class="table">
-    <thead>
-      <tr style="background-color: black;">
-        <th scope="col">#</th>
-        <th scope="col">BOX</th>
-        <th scope="col">NO BERKAS</th>
-        <th scope="col">NO URUT</th>
-        <th scope="col">INDEX</th>
-        <th scope="col">URAIAN MASALAH</th>
-        <th scope="col">TAHUN</th>
-        <th scope="col">JML</th>
-        <th scope="col">KET</th>
-        <th scope="col">ACTION</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for d in data %}
-      <tr>
-        <td>{{ d.row_number }}</td>
-        {% if d.box_number != "" %}
-        <td rowspan="{{ d.boxspan }}"> {{ d.box_number }}</td>
-        {% endif %}
-        {% if d.bundle_number != "" %}
-        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_number }}</td>
-        {% endif %}
-        <td>{{ d.doc_number }}</td>
-        {% if d.bundle_number != "" %}
-        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_title }}</td>
-        {% endif %}
-        <td>{{ d.doc_description }}</td>
-        {% if d.bundle_number != "" %}
-        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_year }}</td>
-        {% endif %}
-        <td>{{ d.doc_count }}</td>
-        {% if d.bundle_number != "" %}
-        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_orinot }}</td>
-        {% endif %}
-        <td><a href="http://google.com">VIEW</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+  </nav>
+  <div class="container">
+    <h3><br/><br/>Aplikasi Monitoring Alih Media<br/>Arsip Digital BWS Maluku Utara</h3>
+    <form  action="{% url link %}" class="row g-3">
+      <div class="col-auto">
+        <label for="search" class="visually-hidden">Keyword..</label>
+        <input class="form-control" name="search" id="" placeholder="Keyword">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">Cari..</button>
+      </div>
+    </form>
+    <h4>
+    {% with data|length as total_results %}
+    Found {{ total_results }} result{{ total_results|pluralize }}
+    {% endwith %}
+    </h4>
+    <table class="table">
+      <thead>
+        <tr style="background-color: black;">
+          <th scope="col">#</th>
+          <th scope="col">BOX</th>
+          <th scope="col">NO BERKAS</th>
+          <th scope="col">NO URUT</th>
+          <th scope="col">INDEX</th>
+          <th scope="col">URAIAN MASALAH</th>
+          <th scope="col">TAHUN</th>
+          <th scope="col">JML</th>
+          <th scope="col">KET</th>
+          <th scope="col">ACTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in data %}
+        <tr>
+          <td>{{ d.row_number }}</td>
+          {% if d.box_number != "" %}
+          <td rowspan="{{ d.boxspan }}"> {{ d.box_number }}</td>
+          {% endif %}
+          {% if d.bundle_number != "" %}
+          <td rowspan="{{ d.bundlespan }}">{{ d.bundle_number }}</td>
+          {% endif %}
+          <td>{{ d.doc_number }}</td>
+          {% if d.bundle_number != "" %}
+          <td rowspan="{{ d.bundlespan }}">{{ d.bundle_title }}</td>
+          {% endif %}
+          <td class="{% if d.pdffound %}file-exist{% endif %}">{{ d.doc_description }}</td>
+          {% if d.bundle_number != "" %}
+          <td rowspan="{{ d.bundlespan }}">{{ d.bundle_year }}</td>
+          {% endif %}
+          <td>{{ d.doc_count }}</td>
+          {% if d.bundle_number != "" %}
+          <td rowspan="{{ d.bundlespan }}">{{ d.bundle_orinot }}</td>
+          {% endif %}
+          <td><a href="http://google.com">VIEW</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>  
+</body>

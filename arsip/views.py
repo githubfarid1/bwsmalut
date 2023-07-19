@@ -1,30 +1,45 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Bundle, Doc 
+from .models import Bundle, Doc, Department
 from django.contrib import messages
 import json
 from django.db.models import Q
-
-
-def getdata(method, parquery, department_id):
+from os.path import exists
+from django.conf import settings
+import inspect
+import sys
+def getdata(method, parquery):
     query = ""
     if method == "GET":
         query = parquery
 
     isfirst = True
     boxlist = []
-    # department_id = 1
+
+    #get caller function name
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    link = calframe[1][3] 
+
+    d = Department.objects.get(link=link)
     if query == None or query == '':
-        docs = Doc.objects.filter(bundle__department_id__exact=department_id)
+        docs = Doc.objects.filter(bundle__department_id__exact=d.id)
     else:
-        docs = Doc.objects.filter(Q(description__icontains=query)  | Q(bundle__title__icontains=query) | Q(bundle__year__contains=query))
+        docs = Doc.objects.filter(Q(bundle__department_id__exact=d.id) & (Q(description__icontains=query)  | Q(bundle__title__icontains=query) | Q(bundle__year__contains=query)))
     isfirst = True
     curbox_number = ""
     curbundle_number = ""
     
     for ke, doc in enumerate(docs):
+        path = r"".join(settings.PDF_LOCATION + d.link + "/" + str(doc.bundle.box_number) + "/"+str(doc.doc_number) + ".pdf")
+        # return HttpResponse(path+"sss")
+        pdffound = False
+        if exists(path):
+            pdffound = True
+
         if isfirst:
             isfirst = False
+
             curbox_number = doc.bundle.box_number
             boxlist.append({"box_number": doc.bundle.box_number,
                             "bundle_number": doc.bundle.bundle_number,
@@ -36,6 +51,7 @@ def getdata(method, parquery, department_id):
                             "doc_count": doc.doc_count,
                             "bundle_orinot": doc.bundle.orinot,
                             "row_number": ke + 1,
+                            "pdffound": pdffound,
                             })
             continue
         if curbox_number == doc.bundle.box_number:
@@ -43,6 +59,7 @@ def getdata(method, parquery, department_id):
         else:
             box_number = doc.bundle.box_number
             curbox_number = doc.bundle.box_number
+        
         if curbundle_number == doc.bundle.bundle_number:
             bundle_number = ""
             bundle_code = ""
@@ -70,6 +87,7 @@ def getdata(method, parquery, department_id):
                         "doc_count": doc_count,
                         "bundle_orinot": bundle_orinot,
                          "row_number": ke + 1,
+                        "pdffound": pdffound,
                         })
         
     isfirst = True
@@ -107,18 +125,20 @@ def getdata(method, parquery, department_id):
     return boxlist
 
 def irigasi(request):
+    funcname = sys._getframe().f_code.co_name
     context = {
-        "data": getdata(method=request.method, parquery=request.GET.get("search"), department_id=1),
-        "link": "irigasi"
+        "data": getdata(method=request.method, parquery=request.GET.get("search")),
+        "link": funcname
     }
     
     return render(request=request, template_name='irigasi.html', context=context)
 
 
 def airbaku(request):
+    funcname = sys._getframe().f_code.co_name
     context = {
-        "data": getdata(method=request.method, parquery=request.GET.get("search"), department_id=2),
-        "link": "airbaku"
+        "data": getdata(method=request.method, parquery=request.GET.get("search")),
+        "link": funcname
     }
     
     return render(request=request, template_name='irigasi.html', context=context)
