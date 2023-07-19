@@ -7,6 +7,12 @@ h2 {
     padding: 20px;
     border-bottom: 5px solid;
 }
+h3 {
+    text-align: center;
+    padding: 20px;
+    border-bottom: 2px solid;
+}
+
 table, tr, th, td {
     border: 1px solid white;
     background-color: darkslateblue;

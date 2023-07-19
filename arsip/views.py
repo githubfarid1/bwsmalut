@@ -5,16 +5,17 @@ from django.contrib import messages
 import json
 from django.db.models import Q
 
-# Create your views here.
-def irigasi(request):
+
+def getdata(method, parquery, department_id):
     query = ""
-    if request.method == "GET":
-        query = request.GET.get('search')
-    # return HttpResponse()
+    if method == "GET":
+        query = parquery
+
     isfirst = True
     boxlist = []
+    # department_id = 1
     if query == None or query == '':
-        docs = Doc.objects.all()
+        docs = Doc.objects.filter(bundle__department_id__exact=department_id)
     else:
         docs = Doc.objects.filter(Q(description__icontains=query)  | Q(bundle__title__icontains=query) | Q(bundle__year__contains=query))
     isfirst = True
@@ -98,29 +99,32 @@ def irigasi(request):
             bundlespan = 1
             rowbundle = ke
 
-    context = {
-        "data": boxlist,
-    }
     # for last record
     if docs.count() != 0:
         boxlist[rowbox]['boxspan'] = boxspan
         boxlist[rowbundle]['bundlespan'] = bundlespan
+
+    return boxlist
+
+def irigasi(request):
+    context = {
+        "data": getdata(method=request.method, parquery=request.GET.get("search"), department_id=1),
+        "link": "irigasi"
+    }
     
     return render(request=request, template_name='irigasi.html', context=context)
 
+
+def airbaku(request):
+    context = {
+        "data": getdata(method=request.method, parquery=request.GET.get("search"), department_id=2),
+        "link": "airbaku"
+    }
+    
+    return render(request=request, template_name='irigasi.html', context=context)
 def pdf_view(request):
     with open('/home/farid/pdf/document.pdf', 'rb') as pdf:
         response = HttpResponse(pdf.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'inline;filename=mypdf.pdf'
         return response
     
-def search(request):
-    results = []
-    if request.method == "GET":
-        query = request.GET.get('search')
-        if query == '':
-            query = 'None'
-
-        results = Doc.objects.filter(Q(description__icontains=query) )
-
-    return render(request, 'search.html', {'query': query, 'results': results})
