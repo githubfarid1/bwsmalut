@@ -1,8 +1,28 @@
 {% load bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-{% bootstrap_messages %}
-<table class="table table-striped">
+{% load static %}
+<head>
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+  {% bootstrap_messages %}
+  <link rel="stylesheet" href="{% static 'arsip/style.css' %}">  
+</head>
+<div class="container">
+  <h2>Aplikasi Monitoring Alih Dokumen <br/> Arsip Digital BWS Maluku Utara</h2>
+  <form  action="{% url 'irigasi' %}" class="row g-3">
+    <div class="col-auto">
+      <label for="search" class="visually-hidden">Keyword..</label>
+      <input class="form-control" name="search" id="" placeholder="Keyword">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary mb-3">Cari..</button>
+    </div>
+  </form>
+  <h3>
+  {% with data|length as total_results %}
+  Found {{ total_results }} result{{ total_results|pluralize }}
+  {% endwith %}
+  </h3>
+  <table class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
@@ -12,12 +32,15 @@
         <th scope="col">INDEX</th>
         <th scope="col">URAIAN MASALAH</th>
         <th scope="col">TAHUN</th>
+        <th scope="col">JML</th>
+        <th scope="col">KET</th>
+        <th scope="col">ACTION</th>
       </tr>
     </thead>
     <tbody>
       {% for d in data %}
       <tr>
-        <td>#</td>
+        <td>{{ d.row_number }}</td>
         {% if d.box_number != "" %}
         <td rowspan="{{ d.boxspan }}"> {{ d.box_number }}</td>
         {% endif %}
@@ -32,7 +55,13 @@
         {% if d.bundle_number != "" %}
         <td rowspan="{{ d.bundlespan }}">{{ d.bundle_year }}</td>
         {% endif %}
-      </tr>  
+        <td>{{ d.doc_count }}</td>
+        {% if d.bundle_number != "" %}
+        <td rowspan="{{ d.bundlespan }}">{{ d.bundle_orinot }}</td>
+        {% endif %}
+        <td><a href="http://google.com">VIEW</a></td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>

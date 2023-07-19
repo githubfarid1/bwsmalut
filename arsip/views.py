@@ -3,18 +3,24 @@ from django.http import HttpResponse
 from .models import Bundle, Doc 
 from django.contrib import messages
 import json
+from django.db.models import Q
 
 # Create your views here.
-
-
 def irigasi(request):
+    query = ""
+    if request.method == "GET":
+        query = request.GET.get('search')
+    # return HttpResponse()
     isfirst = True
     boxlist = []
-    docs = Doc.objects.all()
+    if query == None or query == '':
+        docs = Doc.objects.all()
+    else:
+        docs = Doc.objects.filter(Q(description__icontains=query)  | Q(bundle__title__icontains=query) | Q(bundle__year__contains=query))
     isfirst = True
     curbox_number = ""
     curbundle_number = ""
-
+    
     for ke, doc in enumerate(docs):
         if isfirst:
             isfirst = False
@@ -92,28 +98,29 @@ def irigasi(request):
             bundlespan = 1
             rowbundle = ke
 
-
-        # dt = (doc.bundle.box_number, doc.bundle.bundle_number, doc.doc_number, doc.bundle.code, doc.bundle.title,  
-        #       doc.description, doc.bundle.year, doc.doc_count, doc.bundle.orinot)
-        # boxlist.append(dt)
-    # return HttpResponse(list(json.dumps(boxlist)))
-
-    # boxdict = Bundle.objects.order_by('box_number').values('box_number').distinct()
-    # for box in boxdict:
-    #     if isfirst:
-    #         firstbox = box['box_number']
-    #     bundles = Bundle.objects.filter(box_number=box['box_number']).order_by('bundle_number').prefetch_related('docs')
-    #     bundlelist = []
-    #     for bundle in bundles:
-    #         if isfirst:
-    #             firstbundle = bundle.bundle_number
-    #             isfirst = False
-    #         docs = bundle.docs.all().values()
-    #         bundledict = {'bundle_number': bundle.bundle_number, 'code': bundle.code, 'title': bundle.title, 'year': bundle.year, 'orinot': bundle.orinot, 'title':bundle.title, 'data': list(docs)}
-    #         bundlelist.append(bundledict)
-    #     boxlist.append({'box_number': box['box_number'], 'data': bundlelist})    
-    # # return HttpResponse(list(json.dumps(boxlist)))
     context = {
         "data": boxlist,
     }
-    return render(request=request, template_name='irigasi2.html', context=context)
+    # for last record
+    if docs.count() != 0:
+        boxlist[rowbox]['boxspan'] = boxspan
+        boxlist[rowbundle]['bundlespan'] = bundlespan
+    
+    return render(request=request, template_name='irigasi.html', context=context)
+
+def pdf_view(request):
+    with open('/home/farid/pdf/document.pdf', 'rb') as pdf:
+        response = HttpResponse(pdf.read(), content_type='application/pdf')
+        response['Content-Disposition'] = 'inline;filename=mypdf.pdf'
+        return response
+    
+def search(request):
+    results = []
+    if request.method == "GET":
+        query = request.GET.get('search')
+        if query == '':
+            query = 'None'
+
+        results = Doc.objects.filter(Q(description__icontains=query) )
+
+    return render(request, 'search.html', {'query': query, 'results': results})
