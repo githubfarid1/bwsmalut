@@ -19,16 +19,16 @@
             <a class="nav-link" aria-current="page" href="{% url 'irigasi' %}">Irigasi</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'irigasi' %}">Sungai</a>
+            <a class="nav-link" href="{% url 'sungai' %}">Sungai</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'airbaku' %}">Air Baku</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'irigasi' %}">Pantai</a>
+            <a class="nav-link" href="{% url 'pantai' %}">Pantai</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'irigasi' %}">Keuangan</a>
+            <a class="nav-link" href="{% url 'keuangan' %}">Keuangan</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Satker</a>
@@ -43,13 +43,13 @@
     <form  action="{% url link %}" class="row g-3">
       <div class="col-auto">
         <label for="search" class="visually-hidden">Keyword..</label>
-        <input class="form-control" name="search" id="" placeholder="Keyword">
+        <input class="form-control" name="search" id="" placeholder="Keyword...">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-primary mb-3">Cari..</button>
       </div>
       <div class="col-auto">
-        <p>Total Data: {{ totdata }} <br/>Sudah Proses: {{ totscan }}<br/>Belum Proses: {{ totnotscan }}</p>
+        <p>Kategori: {{ link|title }} <br/>Total Data: {{ totdata }} <br/>Sudah Proses: {{ totscan }}<br/>Belum Proses: {{ totnotscan }}</p>
         <p><label for="file">Progress:</label>
           <progress id="file" value="{{ percent }}" max="100"></progress>&nbsp;&nbsp;<small>{{ percent }}%</small>
         </p>

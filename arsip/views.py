@@ -169,14 +169,59 @@ def airbaku(request):
         "totdata": summary[0],
         "percent": f"{summary[3]:.3f}",
     }
-    
     return render(request=request, template_name='irigasi.html', context=context)
+
+def sungai(request):
+    funcname = sys._getframe().f_code.co_name
+    data = getdata(method=request.method, parquery=request.GET.get("search"))
+    summary = summarydata(data)
+    context = {
+        "data": data,
+        "link": funcname,
+        "totscan": summary[1],
+        "totnotscan": summary[2],
+        "totdata": summary[0],
+        "percent": f"{summary[3]:.3f}",
+    }
+    return render(request=request, template_name='irigasi.html', context=context)
+
+def pantai(request):
+    funcname = sys._getframe().f_code.co_name
+    data = getdata(method=request.method, parquery=request.GET.get("search"))
+    summary = summarydata(data)
+    context = {
+        "data": data,
+        "link": funcname,
+        "totscan": summary[1],
+        "totnotscan": summary[2],
+        "totdata": summary[0],
+        "percent": f"{summary[3]:.3f}",
+    }
+    return render(request=request, template_name='irigasi.html', context=context)
+
+def keuangan(request):
+    funcname = sys._getframe().f_code.co_name
+    data = getdata(method=request.method, parquery=request.GET.get("search"))
+    summary = summarydata(data)
+    context = {
+        "data": data,
+        "link": funcname,
+        "totscan": summary[1],
+        "totnotscan": summary[2],
+        "totdata": summary[0],
+        "percent": f"{summary[3]:.3f}",
+    }
+    return render(request=request, template_name='irigasi.html', context=context)
+
 def pdfdownload(request, link, doc_id):
     doc = Doc.objects.get(id=doc_id)
     path = r"".join(settings.PDF_LOCATION + link + "/" + str(doc.bundle.box_number) + "/"+str(doc.doc_number) + ".pdf")
-    filename = f"{link}_{doc.bundle.box_number}_{doc.doc_number}.pdf"
-    with open(path, 'rb') as pdf:
-        response = HttpResponse(pdf.read(), content_type='application/pdf')
-        response['Content-Disposition'] = f'inline;filename={filename}.pdf'
-        return response
+    if exists(path):
+        filename = f"{link}_{doc.bundle.box_number}_{doc.doc_number}.pdf"
+        with open(path, 'rb') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = f'inline;filename={filename}.pdf'
+            return response
+    else:
+        return HttpResponse("Document not found")
     

@@ -2,7 +2,7 @@ body {
     /* background-color: #e3f2fd; */
 }
 .container {
-    background-color: gainsboro;
+    background-color: white;
     /* color: green; */
 }
 h2 {
@@ -18,7 +18,7 @@ h3 {
 
 table, tr, th, td {
     border: 1px solid gray;
-    background-color: aliceblue;
+    background-color: whitesmoke;
     color: black;
 }
 td > a {
@@ -28,5 +28,5 @@ td > a {
 }
 
 td.file-exist {
-    background-color: mediumaquamarine;
+    background-color: azure;
 }
