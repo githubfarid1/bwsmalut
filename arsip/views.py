@@ -1,15 +1,39 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from .models import Bundle, Doc, Department
 from django.contrib import messages
-import json
+import os
 from django.db.models import Q
 from os.path import exists
 from django.conf import settings
 import inspect
 import sys
-from reportlab.pdfgen import canvas
+import fitz
+ 
+def get_size(file_path, unit='bytes'):
+    file_size = os.path.getsize(file_path)
+    exponents_map = {'bytes': 0, 'kb': 1, 'mb': 2, 'gb': 3}
+    if unit not in exponents_map:
+        raise ValueError("Must select from \
+        ['bytes', 'kb', 'mb', 'gb']")
+    else:
+        size = file_size / 1024 ** exponents_map[unit]
+        return round(size, 3)
 
+def get_page_count(pdffile):
+    doc = fitz.open(pdffile)
+    return doc.page_count
+
+def generatecover(pdffile, coverfilename):
+    path = os.path.join(settings.COVER_LOCATION, coverfilename)
+    if not exists(path):
+        doc = fitz.open(pdffile)
+        page = doc.load_page(0)
+        pix = page.get_pixmap()
+        # output = "outfile.png"
+        pix.save(path)
+        doc.close()        
+              
 def getdata(method, parquery):
     query = ""
     if method == "GET":
@@ -22,7 +46,6 @@ def getdata(method, parquery):
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
     link = calframe[1][3] 
-
     d = Department.objects.get(link=link)
     if query == None or query == '':
         docs = Doc.objects.filter(bundle__department_id__exact=d.id)
@@ -33,28 +56,37 @@ def getdata(method, parquery):
     curbundle_number = ""
     
     for ke, doc in enumerate(docs):
-        path = r"".join(settings.PDF_LOCATION + d.link + "/" + str(doc.bundle.box_number) + "/"+str(doc.doc_number) + ".pdf")
+        path = os.path.join(settings.PDF_LOCATION, d.link, str(doc.bundle.box_number), str(doc.doc_number) + ".pdf")
         pdffound = False
+        filesize = 0
+        pagecount = 0
         if exists(path):
             pdffound = True
-
+            coverfilename = "{}_{}_{}.png".format(d.link, doc.bundle.box_number, doc.doc_number)
+            generatecover(pdffile=path, coverfilename=coverfilename)
+            filesize = get_size(path, "kb")
+            pagecount = get_page_count(pdffile=path)
         if isfirst:
             isfirst = False
 
             curbox_number = doc.bundle.box_number
-            boxlist.append({"box_number": doc.bundle.box_number,
-                            "bundle_number": doc.bundle.bundle_number,
-                            "doc_number": doc.doc_number,
-                            "bundle_code": doc.bundle.code,
-                            "bundle_title": doc.bundle.title,
-                            "bundle_year": doc.bundle.year,
-                            "doc_description": doc.description,
-                            "doc_count": doc.doc_count,
-                            "bundle_orinot": doc.bundle.orinot,
-                            "row_number": ke + 1,
-                            "pdffound": pdffound,
-                            "doc_id": doc.id,
-                            })
+            boxlist.append({
+                "box_number": doc.bundle.box_number,
+                "bundle_number": doc.bundle.bundle_number,
+                "doc_number": doc.doc_number,
+                "bundle_code": doc.bundle.code,
+                "bundle_title": doc.bundle.title,
+                "bundle_year": doc.bundle.year,
+                "doc_description": doc.description,
+                "doc_count": doc.doc_count,
+                "bundle_orinot": doc.bundle.orinot,
+                "row_number": ke + 1,
+                "pdffound": pdffound,
+                "doc_id": doc.id,
+                "coverfilepath": "cover/" + coverfilename,
+                "filesize": filesize,
+                "pagecount": pagecount,
+            })
             continue
         if curbox_number == doc.bundle.box_number:
             box_number = ""
@@ -79,19 +111,23 @@ def getdata(method, parquery):
         doc_number = doc.doc_number
         doc_description = doc.description
         doc_count = doc.doc_count
-        boxlist.append({"box_number": box_number,
-                        "bundle_number": bundle_number,
-                        "doc_number": doc_number,
-                        "bundle_code": bundle_code,
-                        "bundle_title": bundle_title,
-                        "bundle_year": bundle_year,
-                        "doc_description": doc_description,
-                        "doc_count": doc_count,
-                        "bundle_orinot": bundle_orinot,
-                        "row_number": ke + 1,
-                        "pdffound": pdffound,
-                        "doc_id": doc.id,
-                        })
+        boxlist.append({
+            "box_number": box_number,
+            "bundle_number": bundle_number,
+            "doc_number": doc_number,
+            "bundle_code": bundle_code,
+            "bundle_title": bundle_title,
+            "bundle_year": bundle_year,
+            "doc_description": doc_description,
+            "doc_count": doc_count,
+            "bundle_orinot": bundle_orinot,
+            "row_number": ke + 1,
+            "pdffound": pdffound,
+            "doc_id": doc.id,
+            "coverfilepath": "cover/" + coverfilename,
+            "filesize": filesize,
+            "pagecount": pagecount,
+        })
         
     isfirst = True
     rowbox = 0
@@ -129,7 +165,6 @@ def getdata(method, parquery):
 
 def summarydata(data):
     sumscan = 0
-
     for d in data:
         if d['pdffound'] == True:
             sumscan += 1
@@ -215,13 +250,13 @@ def keuangan(request):
 
 def pdfdownload(request, link, doc_id):
     doc = Doc.objects.get(id=doc_id)
-    path = r"".join(settings.PDF_LOCATION + link + "/" + str(doc.bundle.box_number) + "/"+str(doc.doc_number) + ".pdf")
+    path = os.path.join(settings.PDF_LOCATION, link, str(doc.bundle.box_number), str(doc.doc_number) + ".pdf")
     if exists(path):
         filename = f"{link}_{doc.bundle.box_number}_{doc.doc_number}.pdf"
         with open(path, 'rb') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = f'inline;filename={filename}.pdf'
             return response
-    else:
-        return HttpResponse("Document not found")
-    
+    raise Http404    
+
+

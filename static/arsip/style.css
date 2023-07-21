@@ -28,5 +28,9 @@ td > a {
 }
 
 td.file-exist {
-    background-color: azure;
+    background-color: yellow;
+}
+
+.summary {
+    color: red;
 }

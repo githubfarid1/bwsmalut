@@ -139,4 +139,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# PDF_LOCATION = "/home/farid/mount/"
 PDF_LOCATION = "/home/farid/pdfs/"
+COVER_LOCATION = os.path.join(BASE_DIR, "static", "cover")
