@@ -34,6 +34,9 @@ def generatecover(pdffile, coverfilename):
         pix.save(path)
         doc.close()        
               
+def getmenu():
+    return Department.objects.all()
+
 def getdata(method, parquery):
     query = ""
     if method == "GET":
@@ -83,7 +86,7 @@ def getdata(method, parquery):
                 "row_number": ke + 1,
                 "pdffound": pdffound,
                 "doc_id": doc.id,
-                "coverfilepath": "cover/" + coverfilename,
+                "coverfilepath": os.path.join(settings.COVER_URL, coverfilename),
                 "filesize": filesize,
                 "pagecount": pagecount,
             })
@@ -124,7 +127,7 @@ def getdata(method, parquery):
             "row_number": ke + 1,
             "pdffound": pdffound,
             "doc_id": doc.id,
-            "coverfilepath": "cover/" + coverfilename,
+            "coverfilepath": os.path.join(settings.COVER_URL, coverfilename),
             "filesize": filesize,
             "pagecount": pagecount,
         })
@@ -187,6 +190,7 @@ def irigasi(request):
         "totnotscan": summary[2],
         "totdata": summary[0],
         "percent": f"{summary[3]:.3f}",
+        "menu": getmenu(),
     }
     
     return render(request=request, template_name='irigasi.html', context=context)
@@ -203,6 +207,7 @@ def airbaku(request):
         "totnotscan": summary[2],
         "totdata": summary[0],
         "percent": f"{summary[3]:.3f}",
+        "menu": getmenu(),
     }
     return render(request=request, template_name='irigasi.html', context=context)
 
@@ -217,6 +222,7 @@ def sungai(request):
         "totnotscan": summary[2],
         "totdata": summary[0],
         "percent": f"{summary[3]:.3f}",
+        "menu": getmenu(),
     }
     return render(request=request, template_name='irigasi.html', context=context)
 
@@ -231,6 +237,7 @@ def pantai(request):
         "totnotscan": summary[2],
         "totdata": summary[0],
         "percent": f"{summary[3]:.3f}",
+        "menu": getmenu(),
     }
     return render(request=request, template_name='irigasi.html', context=context)
 
@@ -245,6 +252,7 @@ def keuangan(request):
         "totnotscan": summary[2],
         "totdata": summary[0],
         "percent": f"{summary[3]:.3f}",
+        "menu": getmenu(),
     }
     return render(request=request, template_name='irigasi.html', context=context)
 

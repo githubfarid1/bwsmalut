@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-+bgnnw*-yk@2y6)v70#t4@gv!k4yy^gwnp74&w@af57nzx98wi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.1.5", "127.0.0.1"]
 
 
 # Application definition
@@ -141,4 +141,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # PDF_LOCATION = "/home/farid/mount/"
 PDF_LOCATION = "/home/farid/pdfs/"
-COVER_LOCATION = os.path.join(BASE_DIR, "static", "cover")
+COVER_LOCATION = os.path.join(BASE_DIR, "static", "arsip", "cover")
+COVER_URL = os.path.join("arsip", "cover")
