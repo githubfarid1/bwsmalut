@@ -34,3 +34,9 @@ td.file-exist {
 .summary {
     color: red;
 }
+.navbar {
+    border: solid 1px bisque;
+}
+nav a.active {
+    border: solid 1px black;
+}
